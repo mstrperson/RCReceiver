@@ -26,16 +26,24 @@ int RCReceiver::readPWMRaw(int channel) {
     return reading;
 }
 
+int* RCReceiver::readPWMRaw() {
+    int* readings = new int[this->channelCount];
+    for (int i = 0; i < this->channelCount; i++) {
+        readings[i] = readPWMRaw(i);
+    }
+    return readings;
+}
+
 double RCReceiver::readChannel(int channel){
     int reading = readPWMRaw(channel);
 
-    if (MapPWMOutput != nullptr)
-        return MapPWMOutput(reading);
+    if (mapPWMOutput != nullptr)
+        return mapPWMOutput(reading);
 
     return defaultMap(reading);
 }
 
 void RCReceiver::setMap(double(*mappingFunction)(int)) {
-    MapPWMOutput = mappingFunction;
+    mapPWMOutput = mappingFunction;
 }
 

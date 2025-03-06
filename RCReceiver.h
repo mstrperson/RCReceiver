@@ -5,9 +5,9 @@ class RCReceiver
 {
     int* pwmPins;
     int channelCount;
-    double (*MapPWMOutput)(int);
+    double (*mapPWMOutput)(int) = nullptr;
 
-    double defaultMap(int pwm);
+    static double defaultMap(int pwm);
 
 public:
     explicit RCReceiver(int pwmPins[], int channelCount);
@@ -15,6 +15,7 @@ public:
 
     [[nodiscard]] int getChannelCount() const { return channelCount; }
     int readPWMRaw(int channel);
+    int* readPWMRaw();
     double readChannel(int channel);
     void setPWMZeroRange(int start, int end);
     void setMap(double (*mappingFunction)(int));
