@@ -1,24 +1,41 @@
 #ifndef RCRECIEVER_LIBRARY_H
 #define RCRECIEVER_LIBRARY_H
 
+#include "RCChannel.h"
+#include <string>
+#include <stdio.h>
+
 class RCReceiver
 {
-    int* pwmPins;
-    int channelCount;
-    double (*mapPWMOutput)(int) = nullptr;
-
-    static double defaultMap(int pwm);
+    ThrottleChannel*     thro;
+    AxisChannel*         aile;
+    AxisChannel*         elev;
+    AxisChannel*         rudd;
+    ToggleChannel*       gear;
+    ToggleChannel*       aux1;
 
 public:
-    explicit RCReceiver(int pwmPins[], int channelCount);
+    RCReceiver(int throPin, int ailePin, int elevPin, int ruddPin, int gearPin, int aux1Pin);
     ~RCReceiver();
 
-    [[nodiscard]] int getChannelCount() const { return channelCount; }
-    int readPWMRaw(int channel);
-    int* readPWMRaw();
-    double readChannel(int channel);
-    void setPWMZeroRange(int start, int end);
-    void setMap(double (*mappingFunction)(int));
+    double getThro();
+    double getAile();
+    double getElev();
+    double getRudd();
+    bool getGear();
+    bool getAux1();
+
+    void calibrateExtremes();
+    void calibrateZero();
+
+    int getThroRaw() { if(thro == nullptr) return 0; else return thro->raw(); };
+    int getAileRaw() { if(aile == nullptr) return 0; else return aile->raw(); };
+    int getElevRaw() { if(elev == nullptr) return 0; else return elev->raw(); };
+    int getRuddRaw() { if(rudd == nullptr) return 0; else return rudd->raw(); };
+    int getAux1Raw() { if(aux1 == nullptr) return 0; else return aux1->raw(); };
+    int getGearRaw() { if(gear == nullptr) return 0; else return gear->raw(); };
+
+    std::string saveCalibration();
 };
 
 #endif //RCRECIEVER_LIBRARY_H

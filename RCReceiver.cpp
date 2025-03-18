@@ -1,49 +1,119 @@
 #include "RCReceiver.h"
 #include <Arduino.h>
+#include <stdio.h>
+#include <ostream>
+#include <sstream>
+#include <string>
 
-double RCReceiver::defaultMap(int pwm)
+RCReceiver::RCReceiver(int throPin, int ailePin, int elevPin, int ruddPin, int gearPin, int aux1Pin)
 {
-    if (1500 <= pwm && pwm <= 1600)
-        return 0;
-    return (pwm - 1550.0) / 1550.0;
-}
-
-RCReceiver::RCReceiver(int pwmPins[], int channelCount)
-{
-    this->pwmPins = pwmPins;
-    this->channelCount = channelCount;
-    for (int i = 0; i < this->channelCount; i++) {
-        pinMode(pwmPins[i], INPUT);
-    }
+  if(throPin != -1)
+    thro = new ThrottleChannel(throPin);
+  if(ailePin != -1)
+    aile = new AxisChannel(ailePin);
+  if(elevPin != -1)
+    elev = new AxisChannel(elevPin);
+  if(ruddPin != -1)
+    rudd = new AxisChannel(ruddPin);
+  if(gearPin != -1)
+    gear = new ToggleChannel(gearPin);
+  if(aux1Pin != -1)
+    aux1 = new ToggleChannel(aux1Pin);
 }
 
 RCReceiver::~RCReceiver() {
-    delete[] pwmPins;
+    delete thro;
+    delete aile;
+    delete elev;
+    delete rudd;
+    delete gear;
+    delete aux1;
 }
 
-int RCReceiver::readPWMRaw(int channel) {
-    int reading = pulseIn(pwmPins[channel], HIGH, 25000);
-    return reading;
+double RCReceiver::getThro()
+{
+  if(thro == nullptr)
+    return 0;
+  return thro->read();
 }
 
-int* RCReceiver::readPWMRaw() {
-    int* readings = new int[this->channelCount];
-    for (int i = 0; i < this->channelCount; i++) {
-        readings[i] = readPWMRaw(i);
-    }
-    return readings;
+double RCReceiver::getAile()
+{
+  if(aile == nullptr)
+    return 0;
+  return aile->read();
 }
 
-double RCReceiver::readChannel(int channel){
-    int reading = readPWMRaw(channel);
-
-    if (mapPWMOutput != nullptr)
-        return mapPWMOutput(reading);
-
-    return defaultMap(reading);
+double RCReceiver::getElev()
+{
+  if(elev == nullptr)
+    return 0;
+  return elev->read();
 }
 
-void RCReceiver::setMap(double(*mappingFunction)(int)) {
-    mapPWMOutput = mappingFunction;
+double RCReceiver::getRudd()
+{
+  if(rudd == nullptr)
+    return 0;
+  return rudd->read();
 }
 
+bool RCReceiver::getGear()
+{
+  if(gear == nullptr)
+    return false;
+  return gear->isOn();
+}
+
+bool RCReceiver::getAux1()
+{
+  if(aux1 == nullptr)
+    return false;
+  return aux1->isOn();
+}
+
+void RCReceiver::calibrateZero()
+{
+  if(thro != nullptr)
+    thro->calibrateZero();
+  if(aile != nullptr)
+    aile->calibrateZero();
+  if(elev != nullptr)
+    elev->calibrateZero();
+  if(rudd != nullptr)
+    rudd->calibrateZero();
+  if(gear != nullptr)
+    gear->calibrateZero();
+  if(aux1 != nullptr)
+    aux1->calibrateZero();
+}
+
+void RCReceiver::calibrateExtremes()
+{
+  if(thro != nullptr)
+    thro->calibrateExtremes();
+  if(aile != nullptr)
+    aile->calibrateExtremes();
+  if(elev != nullptr)
+    elev->calibrateExtremes();
+  if(rudd != nullptr)
+    rudd->calibrateExtremes();
+  if(gear != nullptr)
+    gear->calibrateExtremes();
+  if(aux1 != nullptr)
+    aux1->calibrateExtremes();
+}
+
+std::string RCReceiver::saveCalibration()
+{
+  std::stringstream output;
+  output << "{" << std::endl
+         << "\"thro\":" << (thro == nullptr ? "null" : thro->saveCalibration()) << "," << std::endl
+         << "\"aile\":" << (aile == nullptr ? "null" : aile->saveCalibration()) << "," << std::endl
+         << "\"elev\":" << (elev == nullptr ? "null" : elev->saveCalibration()) << "," << std::endl
+         << "\"rudd\":" << (rudd == nullptr ? "null" : rudd->saveCalibration()) << "," << std::endl
+         << "\"gear\":" << (gear == nullptr ? "null" : gear->saveCalibration()) << "," << std::endl
+         << "\"aux1\":" << (aux1 == nullptr ? "null" : aux1->saveCalibration()) << "," << std::endl
+         << "}";
+  return output.str();
+}
