@@ -36,6 +36,12 @@ public:
     int getGearRaw() { if(gear == nullptr) return 0; else return gear->raw(); };
 
     std::string saveCalibration();
+    void setThroCalibration(int pwmMin, int pwmMax, int zeroMin, int zeroMax);
+    void setAileCalibration(int pwmMin, int pwmMax, int zeroMin, int zeroMax);
+    void setElevCalibration(int pwmMin, int pwmMax, int zeroMin, int zeroMax);
+    void setRuddCalibration(int pwmMin, int pwmMax, int zeroMin, int zeroMax);
+    void setGearCalibration(int pwmMin, int pwmMax, int zeroMin, int zeroMax);
+    void setAux1Calibration(int pwmMin, int pwmMax, int zeroMin, int zeroMax);
 };
 
 #endif //RCRECIEVER_LIBRARY_H

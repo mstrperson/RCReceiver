@@ -117,3 +117,34 @@ std::string RCReceiver::saveCalibration()
          << "}";
   return output.str();
 }
+
+void RCReceiver::setThroCalibration(int pwmMin, int pwmMax, int zeroMin, int zeroMax)
+{
+  if(thro == nullptr) return;
+  thro->setCalibration(pwmMin, pwmMax, zeroMin, zeroMax);
+}
+void RCReceiver::setAileCalibration(int pwmMin, int pwmMax, int zeroMin, int zeroMax)
+{
+  if(aile == nullptr) return;
+  aile->setCalibration(pwmMin, pwmMax, zeroMin, zeroMax);
+}
+void RCReceiver::setElevCalibration(int pwmMin, int pwmMax, int zeroMin, int zeroMax)
+{
+  if(elev == nullptr) return;
+  elev->setCalibration(pwmMin, pwmMax, zeroMin, zeroMax);
+}
+void RCReceiver::setRuddCalibration(int pwmMin, int pwmMax, int zeroMin, int zeroMax)
+{
+  if(rudd == nullptr) return;
+  rudd->setCalibration(pwmMin, pwmMax, zeroMin, zeroMax);
+}
+void RCReceiver::setGearCalibration(int pwmMin, int pwmMax, int zeroMin, int zeroMax)
+{
+  if(gear == nullptr) return;
+  gear->setCalibration(pwmMin, pwmMax, zeroMin, zeroMax);
+}
+void RCReceiver::setAux1Calibration(int pwmMin, int pwmMax, int zeroMin, int zeroMax)
+{
+  if(aux1 == nullptr) return;
+  aux1->setCalibration(pwmMin, pwmMax, zeroMin, zeroMax);
+}
