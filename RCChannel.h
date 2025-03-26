@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <string>
+/// base RCChannel class, handles logic that is independent of the specific type of RCChannel.
 class RCChannel
 {
   int pin;
@@ -25,6 +26,7 @@ class RCChannel
     std::string saveCalibration();
 };
 
+/// An RC Channel that represents a Throttle type, outputs readings between [0, 1]
 class ThrottleChannel : public RCChannel
 {
   public:
@@ -33,6 +35,7 @@ class ThrottleChannel : public RCChannel
     double read();
 };
 
+/// An RC Channel that is a Toggle Switch, outputs "on" or "off"
 class ToggleChannel : public RCChannel
 {
   public:
@@ -41,6 +44,7 @@ class ToggleChannel : public RCChannel
     bool isOn();
 };
 
+/// An RC Channel that springs back to a midpoint Zero and outputs values [-1, 1]
 class AxisChannel : public RCChannel
 {
   public:
